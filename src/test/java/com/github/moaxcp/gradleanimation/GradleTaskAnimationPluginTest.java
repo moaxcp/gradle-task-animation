@@ -6,18 +6,20 @@ package com.github.moaxcp.gradleanimation;
 import org.gradle.testfixtures.ProjectBuilder;
 import org.gradle.api.Project;
 import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * A simple unit test for the 'com.github.moaxcp.gradleanimation.greeting' plugin.
+ * A simple unit test for the 'com.github.moaxcp.gradleanimation' plugin.
  */
 class GradleTaskAnimationPluginTest {
     @Test void pluginRegistersATask() {
         // Create a test project and apply the plugin
         Project project = ProjectBuilder.builder().build();
-        project.getPlugins().apply("com.github.moaxcp.gradleanimation.greeting");
+        project.getPlugins().apply("com.github.moaxcp.gradleanimation");
 
         // Verify the result
-        assertNotNull(project.getTasks().findByName("greeting"));
+        assertThat(project.getTasks().findByName("greeting")).isNotNull();
     }
 }

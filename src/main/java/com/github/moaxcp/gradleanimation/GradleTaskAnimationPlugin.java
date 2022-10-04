@@ -3,17 +3,35 @@
  */
 package com.github.moaxcp.gradleanimation;
 
-import org.gradle.api.Project;
-import org.gradle.api.Plugin;
+import java.util.List;
+import java.util.Set;
+import javax.inject.Inject;
+import org.gradle.api.*;
+import org.gradle.api.execution.TaskExecutionGraph;
+import org.gradle.api.execution.TaskExecutionGraphListener;
+import org.gradle.api.provider.Property;
+import org.gradle.api.tasks.TaskState;
+import org.gradle.build.event.BuildEventsListenerRegistry;
+import org.gradle.tooling.events.OperationCompletionListener;
 
 /**
  * A simple 'hello world' plugin.
  */
-public class GradleTaskAnimationPlugin implements Plugin<Project> {
+public class GradleTaskAnimationPlugin implements Plugin<Project>, TaskExecutionGraphListener {
+
     public void apply(Project project) {
-        // Register a task
-        project.getTasks().register("greeting", task -> {
-            task.doLast(s -> System.out.println("Hello from plugin 'com.github.moaxcp.gradleanimation.greeting'"));
+        project.getGradle().getTaskGraph().addTaskExecutionGraphListener(this);
+    }
+
+    @Override
+    public void graphPopulated(TaskExecutionGraph taskGraph) {
+        taskGraph.afterTask(task -> {
+
         });
+        List<Task> tasks = taskGraph.getAllTasks();
+        for(Task task : tasks) {
+            String name = task.getName();
+            Set<Task> dependencies = taskGraph.getDependencies(task);
+        }
     }
 }

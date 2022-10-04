@@ -12,6 +12,8 @@ import org.gradle.testkit.runner.GradleRunner;
 import org.gradle.testkit.runner.BuildResult;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -32,20 +34,27 @@ class GradleTaskAnimationPluginFunctionalTest {
     @Test void canRunTask() throws IOException {
         writeString(getSettingsFile(), "");
         writeString(getBuildFile(),
-            "plugins {" +
-            "  id('com.github.moaxcp.gradleanimation.greeting')" +
-            "}");
+                "plugins {\n" +
+                "  id('com.github.moaxcp.gradleanimation')\n" +
+                "}\n" +
+                "task('a') {\n" +
+                "    println 'hello from task a'\n" +
+                "}\n" +
+                "task('b') {\n" +
+                "    dependsOn 'a'\n" +
+                "    println 'hello from task b'\n" +
+                "}\n");
 
         // Run the build
         GradleRunner runner = GradleRunner.create();
         runner.forwardOutput();
         runner.withPluginClasspath();
-        runner.withArguments("greeting");
+        runner.withArguments("b");
         runner.withProjectDir(projectDir);
         BuildResult result = runner.build();
 
         // Verify the result
-        assertTrue(result.getOutput().contains("Hello from plugin 'com.github.moaxcp.gradleanimation.greeting'"));
+        assertThat(result.getOutput()).contains("hello from task a").contains("hello from task b");
     }
 
     private void writeString(File file, String string) throws IOException {
